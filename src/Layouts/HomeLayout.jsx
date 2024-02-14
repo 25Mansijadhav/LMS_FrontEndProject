@@ -1,8 +1,19 @@
 import {FiMenu} from 'react-icons/fi';
 import {AiFillCloseCircle} from 'react-icons/ai';
-import {Link} from 'react-router-dom';
+import {Link, Navigate, useSearchParams} from 'react-router-dom';
 import Footer from '../Components/Footer';
+import { useDispatch, useSelector } from 'react-redux';
+
+
+
 function HomeLayout({children}){
+
+ const dispatch = useDispatch();
+ const navigate = useNavigate();
+
+ const isLoggedIn =useSelector((state) => state?.auth?.isLoggedIn);
+ //for displaying the options
+ const role = useSelector((state) => state?.auth?.role);
 
 function changeWidth(){
     const drawerSide=document.getElementsByClassName("drawer-side");
@@ -16,6 +27,13 @@ function hideDrawer(){
     const drawerSide=document.getElementsByClassName("drawer-side");
     drawerSide[0].computedStyleMap.width='0';
 
+}
+
+function handleLogout(e){
+      e.preventDefault();
+     // const res=await dispatch(logout());
+     //if(res?.payload?.success)
+     navigate("/");
 }
 
 return(
@@ -46,7 +64,11 @@ return(
         <li>
             <Link to="/">Home</Link>
         </li>
-
+        {isLoggedIn && role == 'ADMIN' && (
+            <li>
+                <Link to="/admin/dashboard">Admin DashBoard</Link>
+            </li>
+        )}
         <li>
             <Link to="/courses">All Courses</Link>
         </li>
@@ -58,6 +80,32 @@ return(
         <li>
             <Link to="/about">About Us</Link>
         </li>
+
+        {!isLoggedIn &&(
+            <li className="absolute bottom-4 w-[90%]">
+            <div className="w-full flex items-center justify-center">
+                <button className="bth-primary px-4 py-1 font-semibold rounded-md w-full">
+                  <Link to="/login">Login</Link>
+                </button>
+                <button className="bth-secondary px-4 py-1 font-semibold rounded-md w-full">
+                  <Link to="/login">Signup</Link>
+                </button>
+            </div>
+            </li>
+        )}
+
+        {!isLoggedIn &&(
+            <li className="absolute bottom-4 w-[90%]">
+            <div className="w-full flex items-center justify-center">
+                <button className="bth-primary px-4 py-1 font-semibold rounded-md w-full">
+                  <Link to="/user/profile">Profile</Link>
+                </button>
+                <button className="bth-secondary px-4 py-1 font-semibold rounded-md w-full">
+                  <Link onClick={handleLogout}>LogOut</Link>
+                </button>
+            </div>
+            </li>
+        )}
        </ul>
        </div>
     </div>
